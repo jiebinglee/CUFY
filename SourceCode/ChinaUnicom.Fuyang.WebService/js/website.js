@@ -337,6 +337,10 @@
                 CreditManagement.CreditExchangeApprovalList(1);
             });
 
+            $("#bt_AreaUser").on('click', function () {
+                CreditManagement.GetAreaUser(1);
+            });
+
             var importType = [{ id: 1, text: "渠道商" }, { id: 2, text: "在网数据" }, { id: 3, text: "发展数据" }];
             
             $("#select_ImportType").select2({
@@ -790,6 +794,72 @@
                 tr.find("td").eq(13).html("");
             }
         });
-    }
+    },
+    GetAreaUser: function (pageNumber) {
+        $("#div_AreaUser").empty();
+
+        var SearchParams = {
+            PageNumber: pageNumber,
+            PageSize: 15
+        };
+
+        FreshiCore.PostProcess(CreditManagement.OwnerClass, "GetAreaUser", SearchParams, $("#areaUser"), CreditManagement.GetAreaUserCallback);
+    },
+    GetAreaUserCallback: function (data, status) {
+        var trans = FreshiTransBox.CreateFrom(data);
+        var content = trans.GetContent();
+        if (!isNullOrUndefined(content)) {
+            if (content.PageResult.length > 0) {
+
+                var thArray = ["区县", "用户名"];
+
+                var table = $("<table class='table table-bordered table-striped'></table>");
+                var thead = $("<thead></thead");
+                var thead_tr = $("<tr></tr>");
+                thead_tr.addClass('table-header');
+
+                $.each(thArray, function (index, item) {
+                    var th = $("<th></th>");
+                    th.text(item);
+                    th.appendTo(thead_tr);
+                });
+
+                thead_tr.appendTo(thead);
+                thead.appendTo(table);
+
+                var tbody = $("<tbody></tbody>");
+                $.each(content.PageResult, function (index, item) {
+                    var tbody_tr = $("<tr></tr>");
+
+                    var td1 = $("<td></td>");
+                    td1.text(item.AreaCode);
+                    td1.appendTo(tbody_tr);
+                    var td2 = $("<td></td>");
+                    td2.text(item.UserName);
+                    td2.appendTo(tbody_tr);                                  
+
+                    tbody_tr.data("AreaUserInfo", item);
+
+                    tbody_tr.appendTo(tbody);
+                });
+
+                tbody.appendTo(table);
+
+                $("#div_AreaUser").append(table);
+
+                if (content.PageNumber == 1) {
+                    CreditManagement.BindAreaUserPaging(content.PageNumber, content.TotalPages);
+                }
+            }
+        }
+    },
+    BindAreaUserPaging: function (currentPage, totalPages) {
+        var options = FreshiConfig.PagerDefaultOptions;
+        options.currentPage = currentPage;
+        options.totalPages = totalPages;
+        options.onPageChangedCallback = CreditManagement.GetAreaUser;
+
+        $("#ul_Pager_AreaUser").bootstrapPaginator(options);
+    },
 
 })

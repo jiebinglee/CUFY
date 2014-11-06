@@ -23,6 +23,7 @@ namespace ChinaUnicom.Fuyang.CreditManagement.Mappings
             this.Property(t => t.UserId).HasColumnName("USER_ID");
             this.Property(t => t.AreaCode).HasColumnName("AREA_CODE");
             this.Property(t => t.Flag).HasColumnName("FLAG");
+            this.Property(t => t.AreaName).HasColumnName("AREA_NAME");
         }
     }
 }

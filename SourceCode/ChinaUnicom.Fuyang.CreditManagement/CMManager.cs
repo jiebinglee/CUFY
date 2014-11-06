@@ -76,7 +76,8 @@ namespace ChinaUnicom.Fuyang.CreditManagement
             tasks.Add("SearchChannelList", GetChannelList);
             tasks.Add("ExchangeCredit", ExchangeCredit);
             tasks.Add("GetCreditExchangeApprovalList", GetCreditExchangeApprovalList);
-            tasks.Add("ApprovalExchangeCredit", ApprovalExchangeCredit);    
+            tasks.Add("ApprovalExchangeCredit", ApprovalExchangeCredit);
+            tasks.Add("GetAreaUser", GetAreaUser);    
         }
 
         #endregion
@@ -1197,6 +1198,32 @@ namespace ChinaUnicom.Fuyang.CreditManagement
             }
         }
 
+        private bool GetAreaUser(TransBox data, string user, out object content, ref StringBuilder messager)
+        {
+            bool flagSuccess = false;
+            content = null;
+
+            var paramsFromClient = data.GetContent<Dictionary<string, string>>();
+
+            if (paramsFromClient != null)
+            {
+                var pageNumber = int.Parse(paramsFromClient["PageNumber"]);
+                var pageSize = int.Parse(paramsFromClient["PageSize"]);
+                content = GetAreaUser(pageNumber, pageSize);
+                flagSuccess = true;
+            }
+
+            return flagSuccess;
+        }
+
+        private object GetAreaUser(int pageNumber, int pageSize)
+        {
+            Pageable<AreaUserInfoDto> result = null;
+
+            result = _cmService.GetAreaUser(pageNumber, pageSize);
+
+            return result;
+        }
 
         #endregion
 

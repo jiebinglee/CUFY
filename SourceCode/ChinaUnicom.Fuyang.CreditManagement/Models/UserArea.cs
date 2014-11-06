@@ -15,5 +15,6 @@ namespace ChinaUnicom.Fuyang.CreditManagement.Models
 
         public int UserId { get; set; }
         public string AreaCode { get; set; }
+        public string AreaName { get; set; }
     }
 }

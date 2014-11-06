@@ -40,5 +40,6 @@ namespace ChinaUnicom.Fuyang.CreditManagement.Services
 
         int UpdateCreditTotal(CreditTotal creditTotal);
 
+        Pageable<AreaUserInfoDto> GetAreaUser(int pageNumber, int pageSize);
     }
 }

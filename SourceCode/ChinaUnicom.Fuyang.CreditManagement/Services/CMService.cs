@@ -260,5 +260,26 @@ namespace ChinaUnicom.Fuyang.CreditManagement.Services
             return _creditTotalRepository.Update(creditTotal);
         }
 
+        public Pageable<AreaUserInfoDto> GetAreaUser(int pageNumber, int pageSize)
+        {
+            var user = _userRepository.Table;
+            var userArea = _userAreaRepository.Table;
+
+            var query = from a in userArea
+                        join b in user on a.UserId equals b.Id
+                        where a.Flag == 1 && b.Flag == 1
+                        select new AreaUserInfoDto
+                        {
+                            UserAreaId = a.Id,
+                            AreaCode = a.AreaCode,
+                            AreaName = a.AreaName,
+                            UserId = b.Id,
+                            UserName = b.UserName,
+                            Password = b.Password
+                        };
+
+            return new Pageable<AreaUserInfoDto>(query, t => t.Asc(m => m.AreaCode), pageNumber, pageSize);
+        }
+
     }
 }
