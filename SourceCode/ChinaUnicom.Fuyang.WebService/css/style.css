@@ -1,0 +1,59 @@
+﻿.highlight {
+    padding: 9px 14px;
+    margin-bottom: 14px;
+    background-color: #FFFDD1;
+    border: 1px solid #e1e1e8;
+    border-radius: 4px;
+}
+
+.table-header {
+    background-color: #FA8F01;
+    color: #FFF;
+    font-size: 14px;
+    line-height: 38px;
+    padding-left: 12px;
+    margin-bottom: 1px;
+    text-align: center;
+}
+
+.loginBox {
+    width: 480px;
+    height: 300px;
+    padding: 0 15px;
+    border: 1px solid #C2AB6E;
+    color: #000;
+    margin-top: 40px;
+    /*border-radius: 8px;*/
+    background: white;
+    /*box-shadow: 0 0 15px #222;*/
+    /*background: -moz-linear-gradient(top, #fff, #efefef 8%);*/
+    /*background: -webkit-gradient(linear, 0 0, 0 100%, from(#f6f6f6), to(#f4f4f4));*/
+    font: 11px/1.5em 'Microsoft YaHei';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -240px;
+    margin-top: -115px;
+}
+
+    .loginBox h2 {
+        height: 45px;
+        font-size: 20px;
+        font-weight: normal;
+    }
+
+    .loginBox .left {
+        border-right: 1px solid #ccc;
+        height: 100%;
+        padding-right: 20px;
+    }
+
+.regBtn {
+    margin-top: 21px;
+}
+
+.icon02 {
+background-position: -119px 4px;
+background-image: url(../img/icons.png);
+background-repeat: no-repeat;
+}

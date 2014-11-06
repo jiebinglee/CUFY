@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChinaUnicom.Fuyang.Framework", "ChinaUnicom.Fuyang.Framework\ChinaUnicom.Fuyang.Framework.csproj", "{938A9E6D-4F48-451B-B11C-80F647C49049}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChinaUnicom.Fuyang.Core", "ChinaUnicom.Fuyang.Core\ChinaUnicom.Fuyang.Core.csproj", "{5483DE5F-663A-48FC-A802-50DF1719897B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChinaUnicom.Fuyang.CreditManagement", "ChinaUnicom.Fuyang.CreditManagement\ChinaUnicom.Fuyang.CreditManagement.csproj", "{57627588-D186-4286-A1C5-DA88D77D981F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChinaUnicom.Fuyang.WebService", "ChinaUnicom.Fuyang.WebService\ChinaUnicom.Fuyang.WebService.csproj", "{3DD3951D-B62A-4BB3-A56F-766AF2D29D1D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{938A9E6D-4F48-451B-B11C-80F647C49049}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{938A9E6D-4F48-451B-B11C-80F647C49049}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{938A9E6D-4F48-451B-B11C-80F647C49049}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{938A9E6D-4F48-451B-B11C-80F647C49049}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5483DE5F-663A-48FC-A802-50DF1719897B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5483DE5F-663A-48FC-A802-50DF1719897B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5483DE5F-663A-48FC-A802-50DF1719897B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5483DE5F-663A-48FC-A802-50DF1719897B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57627588-D186-4286-A1C5-DA88D77D981F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57627588-D186-4286-A1C5-DA88D77D981F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57627588-D186-4286-A1C5-DA88D77D981F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57627588-D186-4286-A1C5-DA88D77D981F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DD3951D-B62A-4BB3-A56F-766AF2D29D1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DD3951D-B62A-4BB3-A56F-766AF2D29D1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DD3951D-B62A-4BB3-A56F-766AF2D29D1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DD3951D-B62A-4BB3-A56F-766AF2D29D1D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

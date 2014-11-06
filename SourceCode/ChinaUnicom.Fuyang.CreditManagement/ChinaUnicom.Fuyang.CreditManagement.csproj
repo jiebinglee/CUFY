@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{57627588-D186-4286-A1C5-DA88D77D981F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ChinaUnicom.Fuyang.CreditManagement</RootNamespace>
+    <AssemblyName>ChinaUnicom.Fuyang.CreditManagement</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>..\packages\AutoMapper.3.2.1\lib\net40\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper.Net4">
+      <HintPath>..\packages\AutoMapper.3.2.1\lib\net40\AutoMapper.Net4.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AutoMapperProfiles\ChannelProfile.cs" />
+    <Compile Include="CMEnum.cs" />
+    <Compile Include="CMManager.cs" />
+    <Compile Include="Mappings\ChannelDictionaryMap.cs" />
+    <Compile Include="Mappings\ChannelMap.cs" />
+    <Compile Include="Mappings\ContractMap.cs" />
+    <Compile Include="Mappings\CreditConfigMap.cs" />
+    <Compile Include="Mappings\CreditExchangeMap.cs" />
+    <Compile Include="Mappings\CreditTotalMap.cs" />
+    <Compile Include="Mappings\DevelopmentMap.cs" />
+    <Compile Include="Mappings\ImportMap.cs" />
+    <Compile Include="Mappings\UserAreaMap.cs" />
+    <Compile Include="Models\Channel.cs" />
+    <Compile Include="Models\ChannelDictionary.cs" />
+    <Compile Include="Models\Contract.cs" />
+    <Compile Include="Models\CreditConfig.cs" />
+    <Compile Include="Models\CreditExchange.cs" />
+    <Compile Include="Models\CreditTotal.cs" />
+    <Compile Include="Models\Development.cs" />
+    <Compile Include="Models\Import.cs" />
+    <Compile Include="Models\UserArea.cs" />
+    <Compile Include="temp.cs" />
+    <Compile Include="ViewModels\ChannelCreditExchangeInfoDto.cs" />
+    <Compile Include="ViewModels\DevelopmentSummaryDto.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ICMService.cs" />
+    <Compile Include="Services\CMService.cs" />
+    <Compile Include="ViewModels\ChannelInfoDto.cs" />
+    <Compile Include="ViewModels\DevelopmentInfoDto.cs" />
+    <Compile Include="ViewModels\ImportChannelDto.cs" />
+    <Compile Include="ViewModels\ImportContractDto.cs" />
+    <Compile Include="ViewModels\ImportDevelopmentDto.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ChinaUnicom.Fuyang.Core\ChinaUnicom.Fuyang.Core.csproj">
+      <Project>{5483de5f-663a-48fc-a802-50df1719897b}</Project>
+      <Name>ChinaUnicom.Fuyang.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ChinaUnicom.Fuyang.Framework\ChinaUnicom.Fuyang.Framework.csproj">
+      <Project>{938a9e6d-4f48-451b-b11c-80f647c49049}</Project>
+      <Name>ChinaUnicom.Fuyang.Framework</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\AutoMapper.3.2.1\tools\AutoMapper.targets" Condition="Exists('..\packages\AutoMapper.3.2.1\tools\AutoMapper.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>阜阳联通代理商积分管理系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href="css/bootstrap-theme.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="css/showLoading.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container">
+        <section id="loginPane" class="loginBox row-fluid">
+            <div class="row" style="width:250px;height:60px;background-image:url(img/logo.png);background-size:contain;background-repeat:no-repeat;"></div>
+            <div class="row" style="height:15px;background-color:#E30001;"></div>
+            <div class="row text-center" style="font-size:22px;color:#E30001;font-weight:bold;padding:20px 0px 0px 0px;vertical-align:text-bottom;"><span>阜阳联通代理商积分管理系统</span>  |  <span style="font-size:18px;vertical-align:text-bottom;color:#55412A;letter-spacing:2px;">安徽分公司</span></div>
+            <div class="row text-right"style="font-size:13px;color:#55412A;font-weight:bold;padding:0px 0px 20px 0px;width:98%;">v1.0</div>
+            <div class="row col-md-offset-4 col-md-7 text-right" style="margin-bottom:10px;">                
+                <input type="text" class="form-control" id="tb_UserName" placeholder="用户名"/>
+            </div>
+            <div class="row col-md-offset-4 col-md-7 text-right" style="margin-bottom:15px;">                
+                <input type="password" class="form-control" id="tb_Password" placeholder="密码" />
+            </div>
+            <section class="row-fluid col-md-offset-4 col-md-7 text-right">
+                <input type="button" id="btn_Login" value="进入系统" class="btn btn-primary btn-md btn-block">                
+            </section>
+        </section>
+        <!-- /loginBox -->
+    </div>
+    <script type="text/javascript" src="js/jquery-1.11.1.js"></script>
+    <script type="text/javascript" src="js/jquery-validate.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/jquery.showLoading.js"></script>
+    <script type="text/javascript" src="js/utility.js"></script>
+    <script type="text/javascript" src="js/core.js"></script>
+    <script type="text/javascript" src="js/ajax.js"></script>
+    <script type="text/javascript" src="js/website.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            CreditManagement.LoadLoginPage();
+        });
+    </script>
+</body>
+</html>
