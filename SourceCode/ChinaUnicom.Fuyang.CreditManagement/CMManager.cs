@@ -206,16 +206,23 @@ namespace ChinaUnicom.Fuyang.CreditManagement
             List<ImportChannelDto> importChannelData = new List<ImportChannelDto>();
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                ImportChannelDto importChannelDto = new ImportChannelDto();
-                importChannelDto.UserName = dt.Rows[i]["UserName"].ToString();
-                importChannelDto.AreaCode = dt.Rows[i]["AreaCode"].ToString();
-                importChannelDto.AreaName = dt.Rows[i]["AreaName"].ToString();
-                importChannelDto.ChannelCode = dt.Rows[i]["ChannelCode"].ToString();
-                importChannelDto.ChannelName = dt.Rows[i]["ChannelName"].ToString();
-                importChannelDto.ChannelLevelDesc = dt.Rows[i]["ChannelLevelDesc"].ToString();
-                importChannelDto.JoinYearAndMonth = dt.Rows[i]["JoinYearAndMonth"].ToString();
-                importChannelDto.BuildYearAndMonth = dt.Rows[i]["BuildYearAndMonth"].ToString();
-                importChannelData.Add(importChannelDto);
+                if (!string.IsNullOrEmpty(dt.Rows[i]["UserName"].ToString()))
+                {
+                    ImportChannelDto importChannelDto = new ImportChannelDto();
+                    importChannelDto.UserName = dt.Rows[i]["UserName"].ToString();
+                    importChannelDto.AreaCode = dt.Rows[i]["AreaCode"].ToString();
+                    importChannelDto.AreaName = dt.Rows[i]["AreaName"].ToString();
+                    importChannelDto.ChannelCode = dt.Rows[i]["ChannelCode"].ToString();
+                    importChannelDto.ChannelName = dt.Rows[i]["ChannelName"].ToString();
+                    importChannelDto.ChannelLevelDesc = dt.Rows[i]["ChannelLevelDesc"].ToString();
+                    importChannelDto.JoinYearAndMonth = dt.Rows[i]["JoinYearAndMonth"].ToString();
+                    importChannelDto.BuildYearAndMonth = dt.Rows[i]["BuildYearAndMonth"].ToString();
+                    importChannelData.Add(importChannelDto);
+                }
+                else
+                {
+                    break;
+                }
             }
 
             using (TransactionScope transaction = new TransactionScope())
@@ -328,14 +335,21 @@ namespace ChinaUnicom.Fuyang.CreditManagement
             List<ImportDevelopmentDto> importDevelopmentData = new List<ImportDevelopmentDto>();
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                ImportDevelopmentDto importDevelopmentDto = new ImportDevelopmentDto();
-                importDevelopmentDto.ChannelCode = dt.Rows[i]["ChannelCode"].ToString();
-                importDevelopmentDto.DevType1 = dt.Rows[i]["DevType1"].ToString();
-                importDevelopmentDto.DevType2 = dt.Rows[i]["DevType2"].ToString();
-                importDevelopmentDto.DevType3 = dt.Rows[i]["DevType3"].ToString();
-                importDevelopmentDto.DevType4 = dt.Rows[i]["DevType4"].ToString();
-                importDevelopmentDto.DevYearAndMonth = dt.Rows[i]["DevYearAndMonth"].ToString();
-                importDevelopmentData.Add(importDevelopmentDto);
+                if (!string.IsNullOrEmpty(dt.Rows[i]["ChannelCode"].ToString()))
+                {
+                    ImportDevelopmentDto importDevelopmentDto = new ImportDevelopmentDto();
+                    importDevelopmentDto.ChannelCode = dt.Rows[i]["ChannelCode"].ToString();
+                    importDevelopmentDto.DevType1 = dt.Rows[i]["DevType1"].ToString();
+                    importDevelopmentDto.DevType2 = dt.Rows[i]["DevType2"].ToString();
+                    importDevelopmentDto.DevType3 = dt.Rows[i]["DevType3"].ToString();
+                    importDevelopmentDto.DevType4 = dt.Rows[i]["DevType4"].ToString();
+                    importDevelopmentDto.DevYearAndMonth = dt.Rows[i]["DevYearAndMonth"].ToString();
+                    importDevelopmentData.Add(importDevelopmentDto);
+                }
+                else
+                {
+                    break;
+                }
             }
 
             using (TransactionScope transaction = new TransactionScope())
@@ -489,6 +503,10 @@ namespace ChinaUnicom.Fuyang.CreditManagement
                     importContractDto.ContractYearAndMonth = dt.Rows[i]["ContractYearAndMonth"].ToString();
                     importContractDto.ContractCount = int.Parse(dt.Rows[i]["ContractCount"].ToString() == string.Empty ? "0" : dt.Rows[i]["ContractCount"].ToString());
                     importContractData.Add(importContractDto);
+                }
+                else
+                {
+                    break;
                 }
             }
 

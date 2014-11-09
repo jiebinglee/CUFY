@@ -4,9 +4,13 @@
     CurrentToken: "",
     CurrentUserType: 0,
     LoginErrorPopover: function (element, content, placement) {
+        if (isNullOrTrimEmpty(placement)) {
+            placement = "right";
+        }
+        
         $(element).popover({
             html: true,
-            placement: 'right',
+            placement: placement,
             content: "<span style='color: #a94442;'>" + content + "</span>",
             container: 'body'
         })
@@ -587,7 +591,79 @@
 
                         var td13 = $("<td></td>");
                         var td13Button = $("<input type='button' id='btn_Exchange_" + index + "' value='兑换' style='width:60px;' class='btn btn-primary btn-md btn-block'>");
-                        td13Button.on("click", CreditManagement.ExchageCredit);
+
+                        var exchangeButtonOptions = {
+                            animation: 700,
+                            buttons: {
+                                confirm: {
+                                    id: "confirm",
+                                    text: '确认',
+                                    className: 'btn btn-primary btn-md',
+                                    style: 'width:60px;',
+                                    action: function () {
+                                        var tr = $(td13Button).parent().parent();
+                                        var channelInfo = tr.data("ChannelInfo");
+                                        var textbox = tr.find("input[id^='tb_ExchangeableCredit_']");
+                                        var button = tr.find("input[id^='btn_Exchange_']");
+
+                                        var ExchangeInfo = {
+                                            ChannelGuid: channelInfo.ChannelGUID,
+                                            ExchangeCredit: parseInt(textbox.val())
+                                        };
+
+                                        FreshiCore.PostProcess(CreditManagement.OwnerClass, "ExchangeCredit", ExchangeInfo, tr, function (data, status) {
+                                            var trans = FreshiTransBox.CreateFrom(data);
+                                            var content = trans.GetContent();
+                                            if (!isNullOrUndefined(content)) {
+                                                var channelInfo = content.ChannelInfo;
+                                                textbox.val(channelInfo.ChannelExchangeableCredit);
+                                                if (channelInfo.ChannelExchangeableCredit == 0) {
+                                                    textbox.attr("readonly", true);
+                                                    button.attr("disabled", true);
+                                                }
+                                            }
+                                        });
+
+                                        Apprise('close');
+                                    }
+                                },
+                                cancel: {
+                                    id: "cancel",
+                                    text: '取消',
+                                    className: 'btn btn-primary btn-md',
+                                    style: 'width:60px;',
+                                    action: function () {                                        
+                                        Apprise('close');
+                                        return;
+                                    }
+                                }
+                            },
+                            input: false,
+                            override: false,
+                        };
+
+                        td13Button.on("click", function () {
+                            var tr = $(this).parent().parent();
+                            var textbox = tr.find("input[id^='tb_ExchangeableCredit_']");
+                            var exchangingCredit = textbox.val();
+                            var channelInfo = tr.data("ChannelInfo");
+                            var exchangableCredit = channelInfo.ChannelExchangeableCredit;
+
+                            var r = /^[0-9]*[1-9][0-9]*$/;
+                            
+                            if (isNullOrTrimEmpty(exchangingCredit) 
+                                || !r.test(exchangingCredit)
+                                || parseInt(exchangingCredit) == 0
+                                || parseInt(exchangingCredit) > exchangableCredit) {
+                                CreditManagement.LoginErrorPopover("#" + textbox.attr("id"), "请输入正确的积分！","bottom");
+                                return;
+                            }
+                            
+                            Apprise('您将为 ' + item.ChannelName + ' 兑换 ' + parseInt(exchangingCredit) + ' 积分。', exchangeButtonOptions)
+
+                            this.blur();
+                        });
+
                         if (item.ChannelExchangeableCredit == 0) {
                             td13Button.attr("disabled", "true");
                         }
@@ -617,31 +693,7 @@
         options.onPageChangedCallback = CreditManagement.SearchChannelList;
                 
         $("#ul_Pager").bootstrapPaginator(options);
-    },
-    ExchageCredit: function () {
-        var tr = $(this).parent().parent();
-        var channelInfo = tr.data("ChannelInfo");
-        var textbox = tr.find("input[id^='tb_ExchangeableCredit_']");
-        var button = tr.find("input[id^='btn_Exchange_']");
-
-        var ExchangeInfo = {
-            ChannelGuid: channelInfo.ChannelGUID,
-            ExchangeCredit: textbox.val()
-        };
-
-        FreshiCore.PostProcess(CreditManagement.OwnerClass, "ExchangeCredit", ExchangeInfo, tr, function (data, status) {
-            var trans = FreshiTransBox.CreateFrom(data);
-            var content = trans.GetContent();
-            if (!isNullOrUndefined(content)) {
-                var channelInfo = content.ChannelInfo;
-                textbox.val(channelInfo.ChannelExchangeableCredit);
-                if (channelInfo.ChannelExchangeableCredit == 0) {
-                    textbox.attr("readonly", true);
-                    button.attr("disabled", true);
-                }
-            }
-        });
-    },
+    },    
     CreditExchangeApprovalList: function (pageNumber) {
         $("#div_CreditExchangeApproval").empty();
 
@@ -659,7 +711,6 @@
             if (content.PageResult.length > 0) {
 
                 var thArray = ["区县", "营服中心", "渠道代码", "渠道名称", "渠道等级", "发展积分", "在网积分", "年限加分", "总积分", "已兑换积分", "当前总积分", "申请兑换积分", "状态", ""];
-
                 var table = $("<table class='table table-bordered table-striped'></table>");
                 var thead = $("<thead></thead");
                 var thead_tr = $("<tr></tr>");
@@ -734,18 +785,126 @@
                     td13.text(td13Text);
                     td13.appendTo(tbody_tr);
 
-                    var td14 = $("<td></td>");
+                    var td14 = $("<td style='width:160px;'></td>");
                     if (item.Status == 0) {
-                        var td14ApprovalButton = $("<input type='button' id='btn_Approval_" + index + "' value='通过' style='width:60px;' class='btn btn-primary btn-md btn-block'>");
-                        td14ApprovalButton.on("click",  function () {
+                        var td14ApprovalButton = $("<input type='button' id='btn_Approval_" + index + "' value='通过' style='width:60px;margin:5px;' class='btn btn-primary btn-md'>");
+
+                        var approvalButtonOptions = {
+                            animation: 700,
+                            buttons: {
+                                confirm: {
+                                    id: "confirm",
+                                    text: '确认',
+                                    className: 'btn btn-primary btn-md',
+                                    style: 'width:60px;',
+                                    action: function () {
+                                        var tr = $(td14ApprovalButton).parent().parent();
+                                        var channelCreditExchangeInfo = tr.data("ChannelCreditExchangeInfo");
+
+                                        var ApprovalInfo = {
+                                            ExchangeId: channelCreditExchangeInfo.ExchangeId,
+                                            ApprovalStatus: 1
+                                        };
+
+                                        FreshiCore.PostProcess(CreditManagement.OwnerClass, "ApprovalExchangeCredit", ApprovalInfo, tr, function (data, status) {
+                                            var trans = FreshiTransBox.CreateFrom(data);
+                                            var content = trans.GetContent();
+                                            if (!isNullOrUndefined(content)) {
+                                                var channelInfo = content.ChannelInfo;
+                                                tr.find("td").eq(9).text(channelInfo.ChannelExchangedCredit);
+                                                tr.find("td").eq(10).text(channelInfo.ChannelRemainingTotalAmount);
+                                                tr.find("td").eq(11).text("");
+                                                tr.find("td").eq(12).text("通过");
+                                                tr.find("td").eq(13).html("");
+                                            }
+                                        });
+
+                                        Apprise('close');
+                                    }
+                                },
+                                cancel: {
+                                    id: "cancel",
+                                    text: '取消',
+                                    className: 'btn btn-primary btn-md',
+                                    style: 'width:60px;',
+                                    action: function () {
+                                        Apprise('close');
+                                        return;
+                                    }
+                                }
+                            },
+                            input: false,
+                            override: false,
+                        };
+
+                        td14ApprovalButton.on("click", function () {
                             var tr = $(this).parent().parent();
-                            CreditManagement.ApprovalExchageCredit(tr, 1);
+                            var channelCreditExchangeInfo = tr.data("ChannelCreditExchangeInfo");
+
+                            Apprise('您将审批<font color="red">通过</font>积分兑换申请： ' + channelCreditExchangeInfo.ChannelName + ' 兑换 ' + channelCreditExchangeInfo.ExchangeCredit + ' 积分。', approvalButtonOptions)
+
+                            this.blur();
+
                         });
                         td14.append(td14ApprovalButton);
-                        var td14RejectButton = $("<input type='button' id='btn_Reject_" + index + "' value='拒绝' style='width:60px;' class='btn btn-primary btn-md btn-block'>");
+
+                        var td14RejectButton = $("<input type='button' id='btn_Reject_" + index + "' value='拒绝' style='width:60px;margin:5px;' class='btn btn-primary btn-md'>");
+
+                        var rejectButtonOptions = {
+                            animation: 700,
+                            buttons: {
+                                confirm: {
+                                    id: "confirm",
+                                    text: '确认',
+                                    className: 'btn btn-primary btn-md',
+                                    style: 'width:60px;',
+                                    action: function () {
+                                        var tr = $(td14RejectButton).parent().parent();
+                                        var channelCreditExchangeInfo = tr.data("ChannelCreditExchangeInfo");
+
+                                        var ApprovalInfo = {
+                                            ExchangeId: channelCreditExchangeInfo.ExchangeId,
+                                            ApprovalStatus: -1
+                                        };
+
+                                        FreshiCore.PostProcess(CreditManagement.OwnerClass, "ApprovalExchangeCredit", ApprovalInfo, tr, function (data, status) {
+                                            var trans = FreshiTransBox.CreateFrom(data);
+                                            var content = trans.GetContent();
+                                            if (!isNullOrUndefined(content)) {
+                                                var channelInfo = content.ChannelInfo;
+                                                tr.find("td").eq(9).text(channelInfo.ChannelExchangedCredit);
+                                                tr.find("td").eq(10).text(channelInfo.ChannelRemainingTotalAmount);
+                                                tr.find("td").eq(11).text("");
+                                                tr.find("td").eq(12).text("拒绝");
+                                                tr.find("td").eq(13).html("");
+                                            }
+                                        });
+
+                                        Apprise('close');
+                                    }
+                                },
+                                cancel: {
+                                    id: "cancel",
+                                    text: '取消',
+                                    className: 'btn btn-primary btn-md',
+                                    style: 'width:60px;',
+                                    action: function () {
+                                        Apprise('close');
+                                        return;
+                                    }
+                                }
+                            },
+                            input: false,
+                            override: false,
+                        };
+
                         td14RejectButton.on("click", function () {
                             var tr = $(this).parent().parent();
-                            CreditManagement.ApprovalExchageCredit(tr, -1);
+                            var channelCreditExchangeInfo = tr.data("ChannelCreditExchangeInfo");
+
+                            Apprise('您将审批<font color="red">拒绝</font>积分兑换申请： ' + channelCreditExchangeInfo.ChannelName + ' 兑换 ' + channelCreditExchangeInfo.ExchangeCredit + ' 积分。', rejectButtonOptions)
+
+                            this.blur();
                         });
                         td14.append(td14RejectButton);
                     }
@@ -773,27 +932,6 @@
         options.onPageChangedCallback = CreditManagement.CreditExchangeApprovalList;
 
         $("#ul_Pager_CreditExchangeApproval").bootstrapPaginator(options);
-    },
-    ApprovalExchageCredit: function (tr,approvalStatus) {
-        var channelCreditExchangeInfo = tr.data("ChannelCreditExchangeInfo");
-
-        var ApprovalInfo = {
-            ExchangeId: channelCreditExchangeInfo.ExchangeId,
-            ApprovalStatus: approvalStatus
-        };
-
-        FreshiCore.PostProcess(CreditManagement.OwnerClass, "ApprovalExchangeCredit", ApprovalInfo, tr, function (data, status) {
-            var trans = FreshiTransBox.CreateFrom(data);
-            var content = trans.GetContent();
-            if (!isNullOrUndefined(content)) {
-                var channelInfo = content.ChannelInfo;
-                tr.find("td").eq(9).text(channelInfo.ChannelExchangedCredit);
-                tr.find("td").eq(10).text(channelInfo.ChannelRemainingTotalAmount);
-                tr.find("td").eq(11).text("");
-                tr.find("td").eq(12).text(approvalStatus == 1 ? "通过" : "拒绝");
-                tr.find("td").eq(13).html("");
-            }
-        });
     },
     GetAreaUser: function (pageNumber) {
         $("#div_AreaUser").empty();
