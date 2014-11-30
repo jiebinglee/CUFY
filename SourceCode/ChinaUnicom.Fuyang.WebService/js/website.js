@@ -949,7 +949,7 @@
         if (!isNullOrUndefined(content)) {
             if (content.PageResult.length > 0) {
 
-                var thArray = ["区县", "用户名"];
+                var thArray = ["区县", "用户名", "旧密码", "新密码", "重复新密码", ""];
 
                 var table = $("<table class='table table-bordered table-striped'></table>");
                 var thead = $("<thead></thead");
@@ -974,7 +974,78 @@
                     td1.appendTo(tbody_tr);
                     var td2 = $("<td></td>");
                     td2.text(item.UserName);
-                    td2.appendTo(tbody_tr);                                  
+                    td2.appendTo(tbody_tr);
+
+                    var td3 = $("<td></td>");
+                    var td3TextBox = $("<input type='password' style='width: 80px;' class='form-control' id='tb_OldPassword_" + index + "'/>");
+                    td3.append(td3TextBox);
+                    td3.appendTo(tbody_tr);
+
+                    var td4 = $("<td></td>");
+                    var td4TextBox = $("<input type='password' style='width: 80px;' class='form-control' id='tb_NewPassword_" + index + "'/>");
+                    td4.append(td4TextBox);
+                    td4.appendTo(tbody_tr);
+
+                    var td5 = $("<td></td>");
+                    var td5TextBox = $("<input type='password' style='width: 80px;' class='form-control' id='tb_RepeatNewPassword_" + index + "'/>");
+                    td5.append(td5TextBox);
+                    td5.appendTo(tbody_tr);
+
+                    var td6 = $("<td></td>");
+                    var td6Button = $("<input type='button' id='btn_ModifyPassword_" + index + "' value='修改密码' style='width:60px;' class='btn btn-primary btn-md btn-block'>");
+
+                    td6Button.on("click", function () {
+                        var tr = $(this).parent().parent();
+                        var tb_OldPassword = tr.find("input[id^='tb_OldPassword_']");
+                        var tb_NewPassword = tr.find("input[id^='tb_NewPassword_']");
+                        var tb_RepeatNewPassword = tr.find("input[id^='tb_RepeatNewPassword_']");
+                        var areaUserInfo = tr.data("AreaUserInfo");
+
+                        if (isNullOrTrimEmpty(tb_OldPassword.val())) {
+                            CreditManagement.LoginErrorPopover("#" + tb_OldPassword.attr("id"), "请输入旧密码！", "bottom");
+                            return;
+                        }
+
+                        if (isNullOrTrimEmpty(tb_NewPassword.val())) {
+                            CreditManagement.LoginErrorPopover("#" + tb_NewPassword.attr("id"), "请输入新密码！", "bottom");
+                            return;
+                        }
+
+                        if (isNullOrTrimEmpty(tb_RepeatNewPassword.val())) {
+                            CreditManagement.LoginErrorPopover("#" + tb_RepeatNewPassword.attr("id"), "请输入重复新密码！", "bottom");
+                            return;
+                        }
+
+                        if (tb_NewPassword.val() != tb_RepeatNewPassword.val()) {
+                            CreditManagement.LoginErrorPopover("#" + tb_RepeatNewPassword.attr("id"), "两次新密码输入不一致！", "bottom");
+                            return;
+                        }
+
+                        var UserPasswordInfo = {
+                            UserId: item.UserId,
+                            OldPassword: tb_OldPassword.val(),
+                            NewPassword: tb_NewPassword.val()
+                        };
+                        FreshiCore.PostProcess(CreditManagement.OwnerClass, "ModifyPassword", UserPasswordInfo, tr, function (data, status) {
+                            var trans = FreshiTransBox.CreateFrom(data);
+                            var content = trans.GetContent();
+                            if (!isNullOrUndefined(content)) {
+
+                                if (content) {
+                                    CreditManagement.LoginErrorPopover(tr.find("input[type='button']"), "修改密码成功！");
+                                } else {
+                                    CreditManagement.LoginErrorPopover(tb_OldPassword, "请输入正确的旧密码！", "bottom");
+                                }
+                            } else {
+                                CreditManagement.LoginErrorPopover(tr.find("input[type='button']"), "修改密码失败！");
+                                return;
+                            }
+                        });
+
+                    });
+
+                    td6.append(td6Button);
+                    td6.appendTo(tbody_tr);
 
                     tbody_tr.data("AreaUserInfo", item);
 
@@ -999,5 +1070,4 @@
 
         $("#ul_Pager_AreaUser").bootstrapPaginator(options);
     },
-
 })

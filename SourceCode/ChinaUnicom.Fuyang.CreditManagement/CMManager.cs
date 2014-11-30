@@ -77,7 +77,8 @@ namespace ChinaUnicom.Fuyang.CreditManagement
             tasks.Add("ExchangeCredit", ExchangeCredit);
             tasks.Add("GetCreditExchangeApprovalList", GetCreditExchangeApprovalList);
             tasks.Add("ApprovalExchangeCredit", ApprovalExchangeCredit);
-            tasks.Add("GetAreaUser", GetAreaUser);    
+            tasks.Add("GetAreaUser", GetAreaUser);
+            tasks.Add("ModifyPassword", ModifyPassword);
         }
 
         #endregion
@@ -1244,6 +1245,43 @@ namespace ChinaUnicom.Fuyang.CreditManagement
         }
 
         #endregion
+
+        private bool ModifyPassword(TransBox data, string user, out object content, ref StringBuilder messager)
+        {
+            bool flagSuccess = false;
+            content = null;
+
+            var paramsFromClient = data.GetContent<Dictionary<string, string>>();
+
+            if (paramsFromClient != null)
+            {
+                content = ModifyPassword(int.Parse(paramsFromClient["UserId"]), paramsFromClient["OldPassword"], paramsFromClient["NewPassword"]);
+                flagSuccess = true;
+            }
+
+            return flagSuccess;
+        }
+
+        private bool ModifyPassword(int userId, string oldPassword, string newPassword)
+        {
+            bool result = false;
+
+            var user = _userService.GetUser(userId);
+
+            if (user.Password == EncryptPassword(oldPassword))
+            {
+                using (TransactionScope transaction = new TransactionScope())
+                {
+                    user.Password = EncryptPassword(newPassword);
+                    result = _userService.UpdateUser(user) == 1 ? true : false;
+
+                    transaction.Complete();
+                }
+            }
+
+            return result;
+        }
+
 
         #endregion
     }

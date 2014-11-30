@@ -33,5 +33,10 @@ namespace ChinaUnicom.Fuyang.Core.Users.Services
         {
             return _userRepository.Get(t => t.Id == UserId && t.Flag == 1);
         }
+
+        public int UpdateUser(User user)
+        {
+            return _userRepository.Update(user);
+        }
     }
 }

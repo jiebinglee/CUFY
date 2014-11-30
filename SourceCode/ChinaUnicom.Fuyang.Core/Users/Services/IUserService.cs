@@ -13,5 +13,6 @@ namespace ChinaUnicom.Fuyang.Core.Users.Services
         User GetUser(string userName, string password);
         User Insert(User user);
         User GetUser(int UserId);
+        int UpdateUser(User user);
     }
 }
