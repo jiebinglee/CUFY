@@ -79,6 +79,7 @@
     <Compile Include="Models\UserArea.cs" />
     <Compile Include="temp.cs" />
     <Compile Include="ViewModels\AreaUserInfoDto.cs" />
+    <Compile Include="ViewModels\ChannelCreditDetail.cs" />
     <Compile Include="ViewModels\ChannelCreditExchangeInfoDto.cs" />
     <Compile Include="ViewModels\DevelopmentSummaryDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

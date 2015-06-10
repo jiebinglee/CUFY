@@ -66,6 +66,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Admin\channelcredit.html" />
     <Content Include="Area\index.html" />
     <Content Include="css\apprise-v2.css" />
     <Content Include="css\bootstrap-theme.css" />
@@ -101,7 +102,9 @@
     <Content Include="js\website.js" />
     <Content Include="login.html" />
     <Content Include="Admin\index.html" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyLocator.cs" />

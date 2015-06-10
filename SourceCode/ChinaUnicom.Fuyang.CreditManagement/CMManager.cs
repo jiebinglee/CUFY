@@ -79,6 +79,7 @@ namespace ChinaUnicom.Fuyang.CreditManagement
             tasks.Add("ApprovalExchangeCredit", ApprovalExchangeCredit);
             tasks.Add("GetAreaUser", GetAreaUser);
             tasks.Add("ModifyPassword", ModifyPassword);
+            tasks.Add("GetChannelCreditDetail", GetChannelCreditDetail);
         }
 
         #endregion
@@ -1245,6 +1246,23 @@ namespace ChinaUnicom.Fuyang.CreditManagement
         }
 
         #endregion
+
+        private bool GetChannelCreditDetail(TransBox data, string user, out object content, ref StringBuilder messager)
+        {
+            bool flagSuccess = false;
+            content = null;
+
+            var paramsFromClient = data.GetContent<Guid>();
+
+            if (paramsFromClient != null)
+            {
+                //content = SearchChannel(int.Parse(user), paramsFromClient["BeginYear"], paramsFromClient["BeginMonth"], paramsFromClient["EndYear"], paramsFromClient["EndMonth"]);
+                content = _cmService.GetChannelCreditDetail(paramsFromClient);
+                flagSuccess = true;
+            }
+
+            return flagSuccess;
+        }
 
         private bool ModifyPassword(TransBox data, string user, out object content, ref StringBuilder messager)
         {

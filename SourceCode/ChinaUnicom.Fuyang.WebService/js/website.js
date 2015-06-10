@@ -555,7 +555,7 @@
                     td3.text(item.ChannelCode);
                     td3.appendTo(tbody_tr);
                     var td4 = $("<td></td>");
-                    td4.text(item.ChannelName);
+                    td4.html('<a href="channelcredit.html?guid=' + item.ChannelGUID + '" target="_blank">' + item.ChannelName + '</a>');
                     td4.appendTo(tbody_tr);
                     var td5 = $("<td></td>");
                     td5.text(item.ChannelLevelDesc);
@@ -1069,5 +1069,88 @@
         options.onPageChangedCallback = CreditManagement.GetAreaUser;
 
         $("#ul_Pager_AreaUser").bootstrapPaginator(options);
+    },
+    LoadChannelCreditPage: function () {        
+            CreditManagement.LoadChannelCreditDetail();        
+    },
+    LoadChannelCreditDetail: function () {
+        var guid = "";
+        var reg = new RegExp("(^|&)" + "guid" + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null)
+            guid = unescape(r[2]);
+        FreshiCore.PostProcess(CreditManagement.OwnerClass, "GetChannelCreditDetail", guid, null, CreditManagement.LoadChannelCreditDetailCallback);
+    },
+    LoadChannelCreditDetailCallback: function (data, status) {
+        var trans = FreshiTransBox.CreateFrom(data);
+        var content = trans.GetContent();
+        if (!isNullOrUndefined(content)) {
+            if (content.length > 0) {
+
+                var thArray = ["渠道名称", "年", "月", "亲情卡、长话卡", "2G单卡、无线公话", "3G/4G单卡、宽带", "3G/4G合约终端", "签约积分"];
+
+                var table = $("<table class='table table-bordered table-striped'></table>");
+                var thead = $("<thead></thead");
+                var thead_tr = $("<tr></tr>");
+                thead_tr.addClass('table-header');
+
+                $.each(thArray, function (index, item) {
+                    var th = $("<th></th>");
+                    th.text(item);
+                    th.appendTo(thead_tr);
+                });
+
+                thead_tr.appendTo(thead);
+                thead.appendTo(table);
+
+                var tbody = $("<tbody></tbody>");
+                $.each(content, function (index, item) {
+                    var tbody_tr = $("<tr></tr>");
+
+                    var td1 = $("<td></td>");
+                    td1.text(item.ChannelName);
+                    td1.appendTo(tbody_tr);
+
+                    var td2 = $("<td></td>");
+                    td2.text(item.CreditYear);
+                    td2.appendTo(tbody_tr);
+
+                    var td3 = $("<td></td>");
+                    td3.text(item.CreditMonth);
+                    td3.appendTo(tbody_tr);
+
+                    var td4 = $("<td></td>");
+                    td4.text(item.Dev1Credit);
+                    td4.appendTo(tbody_tr);
+
+                    var td5 = $("<td></td>");
+                    td5.text(item.Dev2Credit);
+                    td5.appendTo(tbody_tr);
+
+                    var td6 = $("<td></td>");
+                    td6.text(item.Dev3Credit);
+                    td6.appendTo(tbody_tr);
+
+                    var td7 = $("<td></td>");
+                    td7.text(item.Dev4Credit);
+                    td7.appendTo(tbody_tr);
+
+                    var td8 = $("<td></td>");
+                    td8.text(item.ContractCredit);
+                    td8.appendTo(tbody_tr);
+
+                    tbody_tr.data("ChannelCreditDetial", item);
+
+                    tbody_tr.appendTo(tbody);
+                });
+
+                tbody.appendTo(table);
+
+                $("#div_ChannelDetail").append(table);
+            }
+            else {
+                $("#span_nodata").text("没有积分数据。");
+            }
+        }
     },
 })

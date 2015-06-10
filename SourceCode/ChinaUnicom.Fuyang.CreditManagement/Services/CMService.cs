@@ -281,5 +281,197 @@ namespace ChinaUnicom.Fuyang.CreditManagement.Services
             return new Pageable<AreaUserInfoDto>(query, t => t.Asc(m => m.AreaCode), pageNumber, pageSize);
         }
 
+        public List<ChannelCreditDetail> GetChannelCreditDetail(Guid channelGuid)
+        {
+            List<ChannelCreditDetail> creditDetailList = new List<ChannelCreditDetail>();
+            
+            string sqlDev = @"select  a.channel_guid as ChannelGUID,
+                                    a.dev_year as CreditYear,
+                                    a.dev_month as CreditMonth,
+                                    max(case a.dev_type when 1 then a.credit_amount else 0 end) as Dev1Credit,
+                                    max(case a.dev_type when 2 then a.credit_amount else 0 end) as Dev2Credit,
+                                    max(case a.dev_type when 3 then a.credit_amount else 0 end) as Dev3Credit,
+                                    max(case a.dev_type when 4 then a.credit_amount else 0 end) as Dev4Credit
+                                    from CM_DEVELOPMENT a 
+                                    where a.channel_guid = '{0}'
+                                    group by a.channel_guid,a.dev_year,a.dev_month
+                                    order by a.dev_year desc,a.dev_month desc";
+            sqlDev = string.Format(sqlDev, channelGuid.ToString());
+
+            string sqlContract = @"select   a.channel_guid as ChannelGUID,
+                                            a.contract_year as CreditYear,
+                                            a.contract_month as CreditMonth,
+                                            a.credit_amount as ContractCredit
+                                            from CM_CONTRACT a where a.channel_guid = '{0}'
+                                            order by a.contract_year desc,a.contract_month desc";
+            sqlContract = string.Format(sqlContract, channelGuid.ToString());
+
+            //1.获取积分数据
+            var devCredit = _developmentRepository.Fetch(t => t.ChannelGUID == channelGuid);
+            var devQuery = from a in devCredit
+                           group a by new
+                           {
+                               a.ChannelGUID,
+                               a.DevYear,
+                               a.DevMonth
+                           }                           
+                               into b
+                               select new ChannelDevelopmentCreditDetail
+                               {
+                                   ChannelGUID = b.Key.ChannelGUID,
+                                   CreditYear = b.Key.DevYear,
+                                   CreditMonth = b.Key.DevMonth,
+                                   Dev1Credit = (from c in b where c.DevType == 1 select c.CreditAmount).Max(),
+                                   Dev2Credit = (from c in b where c.DevType == 2 select c.CreditAmount).Max(),
+                                   Dev3Credit = (from c in b where c.DevType == 3 select c.CreditAmount).Max(),
+                                   Dev4Credit = (from c in b where c.DevType == 4 select c.CreditAmount).Max()
+                               };
+            var dev = devQuery.OrderByDescending(t => t.CreditYear).ThenByDescending(t => t.CreditMonth).ToList();
+
+            var contractCredit = _contractRepository.Fetch(t => t.ChannelGUID == channelGuid);
+            var contractQuery = from a in contractCredit
+                                select new ChannelContractCreditDetail
+                                {
+                                    ChannelGUID = a.ChannelGUID,
+                                    CreditYear = a.ContractYear,
+                                    CreditMonth = a.ContractMonth,
+                                    ContractCredit = a.CreditAmount
+                                };
+            var contract = contractQuery.OrderByDescending(t => t.CreditYear).ThenByDescending(t => t.CreditMonth).ToList();
+
+            //2.计算最大年月和最小年月
+            var maxYear = 0;
+            var maxMonth = 0;
+            var minYear = 0;
+            var minMonth = 0;
+
+            var devMaxYear = dev[0].CreditYear;
+            var devMaxMonth = dev[0].CreditMonth;
+            var devMinYear = dev[dev.Count - 1].CreditYear;
+            var devMinMonth = dev[dev.Count - 1].CreditMonth;
+            var contractMaxYear = contract[0].CreditYear;
+            var contractMaxMonth = contract[0].CreditMonth;
+            var contractMinYear = contract[contract.Count - 1].CreditYear;
+            var contractMinMonth = contract[contract.Count - 1].CreditMonth;
+
+            if (devMaxYear == contractMaxYear)
+            {
+                maxYear = devMaxYear;
+
+                if (devMaxMonth > contractMaxMonth)
+                {
+                    maxMonth = devMaxMonth;
+                }
+                else
+                {
+                    maxMonth = contractMaxMonth;
+                }
+            }
+            else if (devMaxYear > contractMaxYear)
+            {
+                maxYear = devMaxYear;
+                maxMonth = devMaxMonth;
+            }
+            else
+            {
+                maxYear = contractMaxYear;
+                maxMonth = contractMaxMonth;
+            }
+
+            if (devMinYear == contractMinYear)
+            {
+                minYear = devMinYear;
+
+                if (devMinMonth > contractMinMonth)
+                {
+                    minMonth = contractMinMonth;
+                }
+                else
+                {
+                    minMonth = devMinMonth;
+                }
+            }
+            else if (devMinYear > contractMinYear)
+            {
+                minYear = contractMinYear;
+                minMonth = contractMinMonth;
+            }
+            else
+            {
+                minYear = devMinYear;
+                minMonth = devMinMonth;
+            }
+
+            //3.处理积分数据
+            var periodYear = maxYear;
+            var periodMonth = maxMonth;
+            var index = 0;
+            ;
+            while (!LargerYearAndMonth(minYear, minMonth, periodYear, periodMonth))
+            {
+                var devPeriods = dev.Where(t => t.CreditYear == periodYear && t.CreditMonth == periodMonth).FirstOrDefault();
+                var contractPeriods = contract.Where(t => t.CreditYear == periodYear && t.CreditMonth == periodMonth).FirstOrDefault();
+
+                ChannelCreditDetail creditDetail = new ChannelCreditDetail();
+
+                var channel = GetChannel(channelGuid);
+                creditDetail.ChannelGUID = channel.ChannelGUID;
+                creditDetail.ChannelName = channel.ChannelName;
+
+                creditDetail.CreditYear = periodYear;
+                creditDetail.CreditMonth = periodMonth;
+                
+
+                if (devPeriods != null)
+                {
+                    creditDetail.Dev1Credit = devPeriods.Dev1Credit.HasValue ? devPeriods.Dev1Credit.Value : 0;
+                    creditDetail.Dev2Credit = devPeriods.Dev2Credit.HasValue ? devPeriods.Dev2Credit.Value : 0;
+                    creditDetail.Dev3Credit = devPeriods.Dev3Credit.HasValue ? devPeriods.Dev3Credit.Value : 0;
+                    creditDetail.Dev4Credit = devPeriods.Dev4Credit.HasValue ? devPeriods.Dev4Credit.Value : 0;
+                }
+                else
+                {
+                    creditDetail.Dev1Credit = 0;
+                    creditDetail.Dev2Credit = 0;
+                    creditDetail.Dev3Credit = 0;
+                    creditDetail.Dev4Credit = 0;
+                }
+
+                if (contractPeriods != null)
+                {
+                    creditDetail.ContractCredit = contractPeriods.ContractCredit;
+                }
+                else
+                {
+                    creditDetail.ContractCredit = 0;
+                }
+
+                creditDetailList.Add(creditDetail);
+
+                periodMonth--;
+                if (periodMonth == 0)
+                {
+                    periodMonth = 12;
+                    periodYear--;
+                }
+            }
+           
+
+            return creditDetailList;
+        }
+
+        private bool LargerYearAndMonth(int beginYear, int beginMonth, int endYear, int endMonth)
+        {
+            if (beginYear > endYear)
+                return true;
+            if (beginYear == endYear)
+            {
+                if (beginMonth > endMonth)
+                    return true;
+            }
+
+            return false;
+        }
+
     }
 }
